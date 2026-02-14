@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>رسالة حب مفاجأة 💌</title>
 <style>
+/* ---------- متغيرات وأساسيات ---------- */
 :root{
   --bg1:#ffd6e7;
   --bg2:#ffeecf;
@@ -12,28 +13,39 @@
   --red:#ff4d4d;
   --text:#222;
 }
-*{box-sizing:border-box}
+html,body{height:100%; margin:0; padding:0;}
+
+/* منع أي scroll نهائيًا */
 body{
-  margin:0;
-  min-height:100vh;
-  font-family:Arial, "Noto Sans Arabic", sans-serif;
+  overflow:hidden;
+  font-family: Arial, "Noto Sans Arabic", sans-serif;
   background: linear-gradient(135deg,var(--bg1),var(--bg2));
   display:flex;
   align-items:center;
   justify-content:center;
-  padding:20px;
   color:var(--text);
-  overflow:hidden; /* يمنع scroll */
+  padding:16px;
 }
+
+/* الصندوق المركزي */
 .wrapper{
   width:100%;
   max-width:820px;
-  background:rgba(255,255,255,0.65);
-  border-radius:18px;
-  padding:18px;
+  height:calc(100vh - 32px); /* يحتل الشاشة بدون أن ينشئ scroll */
+  background:rgba(255,255,255,0.75);
+  border-radius:16px;
+  padding:20px;
   box-shadow:0 10px 30px rgba(0,0,0,0.12);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  position:relative;
   text-align:center;
+  overflow:hidden; /* يمنع ظهور محتوى خارج الصندوق */
 }
+
+/* الصورة الرئيسية */
 #mainImage{
   width:82%;
   max-width:420px;
@@ -43,49 +55,84 @@ body{
   box-shadow:0 8px 18px rgba(0,0,0,0.12);
 }
 
-/* سؤال وحجم مناسب */
+/* --------- السؤال (مرتب + إيموجي على اليسار) --------- */
 #question{
-  font-size: clamp(20px, 4.5vw, 28px);
-  line-height:1.4;
-  margin:8px 0 14px;
+  /* حجم مرن مناسب للجوال */
+  font-size: clamp(20px, 4.5vw, 30px);
+  line-height:1.45;
+  margin:10px 8px 14px;
+  /* نجعل العنصر حاوية مرنة لعمل نص + إيموجي على اليسار */
+  display:flex;
+  flex-direction:row;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  direction: rtl; /* كتابة عربية صحيحة */
+  text-align: right;
+  max-width:92%;
+  word-break:normal;
 }
 
-/* أزرار */
+/* نص السؤال */
+.qtext{
+  display:inline-block;
+  text-align:right;
+  direction:rtl;
+  white-space:normal;
+  word-break:break-word;
+}
+
+/* الايموجي نجعله على أقصى اليسار بعد النص */
+.qemoji{
+  display:inline-block;
+  /* نجبر الايموجي ليظهر بعد النص وبالجهة اليسرى */
+  margin-left:10px;
+  font-size:1.05em;
+  flex-shrink:0;
+}
+
+/* ---------- الأزرار ---------- */
 .actions{
   position:relative;
   width:100%;
   display:flex;
   justify-content:center;
   gap:14px;
-  margin-top:6px;
-  flex-wrap:wrap;
+  margin-top:12px;
+  pointer-events:auto;
 }
-button {
-  border: none;
+button{
+  border:none;
   border-radius:12px;
-  padding: 14px 28px;
+  padding:12px 26px;
   font-size: clamp(16px, 4vw, 22px);
   cursor:pointer;
   box-shadow:0 6px 12px rgba(0,0,0,0.08);
   transition: transform .12s ease, opacity .12s ease;
+  user-select:none;
+  -webkit-user-select:none;
 }
 
-/* زر نعم */
+/* ألوان */
 #yes{ background:var(--green); color:#fff; }
+#no{ background:var(--red); color:#fff; }
 
-/* زر لا */
-#no{ background:var(--red); color:#fff; position:relative; }
-
-/* نتيجة */
+/* ---------- نتيجة الضغط على نعم (مرتب) ---------- */
 .result{
   display:none;
   margin-top:18px;
+  width:92%;
+  text-align:center;
 }
 .result h1{
   font-size: clamp(18px, 3.5vw, 22px);
   line-height:1.6;
   margin:8px 6px;
   color:var(--text);
+  direction:rtl;
+  text-align:right;
+  white-space:normal;
+  word-break:break-word;
 }
 .result img{
   width:70%;
@@ -95,32 +142,42 @@ button {
   box-shadow:0 8px 18px rgba(0,0,0,0.12);
 }
 
-/* زر تشغيل الصوت الاحتياطي */
+/* زر التشغيل الاحتياطي */
 #playFallback{
   display:none;
   margin-top:12px;
   background:#0066cc;
   color:#fff;
+  padding:10px 18px;
+  font-size:16px;
+  border-radius:10px;
 }
 
-/* موبايل */
+/* لجعل كل شيء مناسب جدًا للموبايل */
 @media (max-width:420px){
-  .wrapper{ padding:14px; border-radius:12px;}
+  .wrapper{ padding:14px; border-radius:12px; height:calc(100vh - 24px); }
   #mainImage{ width:95%; margin:10px auto;}
+  #question{ font-size:20px; }
 }
 </style>
 </head>
 <body>
 <div class="wrapper">
-  <h1 id="question">هل تحب رسالة مفاجأة؟ 💌</h1>
+
+  <!-- السؤال: نص عربي + ايموجي في span منفصل -->
+  <h1 id="question">
+    <span class="qtext">هل تحب رسالة مفاجأة؟</span>
+    <span class="qemoji" aria-hidden="true">💌</span>
+  </h1>
+
   <img id="mainImage" src="question.jpg" alt="سؤال">
 
-  <div class="actions">
-    <button id="yes">نعم</button>
-    <button id="no">لا</button>
+  <div class="actions" aria-hidden="false">
+    <button id="yes" aria-label="نعم">نعم</button>
+    <button id="no" aria-label="لا">لا</button>
   </div>
 
-  <div class="result" id="result">
+  <div class="result" id="result" aria-live="polite">
     <h1 id="resultText">
       ها قد وصلت! ❤️<br>
       أريدك أن تعرف أن كل لحظة أفكر فيها بك، كل ابتسامة أرسلها لك، وكل دفء قلبي، هي كلها لك 🌹<br>
@@ -131,56 +188,119 @@ button {
     <br>
     <button id="playFallback">تشغيل الصوت إذا لم يعمل</button>
   </div>
+
 </div>
 
+<!-- الصوت -->
 <audio id="sound" src="calm-melody.mp3" preload="auto"></audio>
 
 <script>
-// زر لا يهرب دائمًا داخل الشاشة
+/* ====== تجهيز عناصر ====== */
 const noBtn = document.getElementById('no');
+const yesBtn = document.getElementById('yes');
+const sound = document.getElementById('sound');
+const resultDiv = document.getElementById('result');
+const playFallback = document.getElementById('playFallback');
 
+/* ====== وضع ابتدائي معطل لإحداث scroll ======
+   نستخدم position:fixed للزر "لا" حتى يبقى داخل نافذة العرض دومًا */
+function placeNoInitial() {
+  // وضع البداية قرب يمين المركز (لكن داخل الشاشة)
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  const startLeft = Math.min(vw * 0.6, vw - noBtn.offsetWidth - 16);
+  const startTop = Math.min(vh * 0.7, vh - noBtn.offsetHeight - 16);
+  noBtn.style.position = 'fixed';
+  noBtn.style.left = startLeft + 'px';
+  noBtn.style.top = startTop + 'px';
+}
+placeNoInitial();
+
+/* ====== دالة حركة الزر — مقيدة داخل نافذة العرض (بدون خروج) ====== */
 function moveButtonOnce(){
     const margin = 12;
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
     const btnWidth = noBtn.offsetWidth;
     const btnHeight = noBtn.offsetHeight;
-    const maxX = viewportWidth - btnWidth - margin;
-    const maxY = viewportHeight - btnHeight - margin;
-    const x = Math.random() * maxX;
-    const y = Math.random() * maxY;
-    noBtn.style.position = 'fixed'; // ثابت في الشاشة
+
+    const maxX = Math.max(viewportWidth - btnWidth - margin, margin);
+    const maxY = Math.max(viewportHeight - btnHeight - margin, margin);
+
+    // لإعطاء حركة لطيفة، نمنع الاختيار القريب جداً من المواضع الأخيرة
+    const prevLeft = parseFloat(noBtn.style.left) || (viewportWidth*0.6);
+    const prevTop = parseFloat(noBtn.style.top) || (viewportHeight*0.7);
+
+    let x, y, attempts = 0;
+    do {
+      x = Math.random() * maxX;
+      y = Math.random() * maxY;
+      attempts++;
+      // نكرر حتى نبتعد قليلاً عن الموقع السابق أو نجرب بعض المحاولات
+    } while(Math.hypot(x-prevLeft, y-prevTop) < 60 && attempts < 8);
+
     noBtn.style.left = x + 'px';
     noBtn.style.top = y + 'px';
-    noBtn.style.transform = "scale(1.03)";
+    // حركة صغيرة
+    noBtn.style.transform = "scale(1.04)";
     setTimeout(()=> noBtn.style.transform = "scale(1)",120);
 }
+
+/* ====== حدث اللمس/ماوس ====== */
 noBtn.addEventListener('mouseover', moveButtonOnce);
 noBtn.addEventListener('touchstart', function(e){ e.preventDefault(); moveButtonOnce(); }, {passive:false});
 noBtn.addEventListener('click', moveButtonOnce);
 
-// زر نعم — عرض النتيجة وتشغيل الصوت
-const yesBtn = document.getElementById('yes');
-const sound = document.getElementById('sound');
-const resultDiv = document.getElementById('result');
-
+/* ====== زر نعم: إخفاء المحتوى الأصلي وإظهار النتيجة وتشغيل الصوت ====== */
 yesBtn.addEventListener('click', async function(){
+  // اخفاء العناصر الأساسية
   document.getElementById('question').style.display='none';
   document.getElementById('mainImage').style.display='none';
   document.querySelector('.actions').style.display='none';
+
+  // إظهار النتيجة
   resultDiv.style.display='block';
-  try{
+
+  // محاولة تشغيل الصوت (عادة يعمل لأن المستخدم ضغط زر)
+  try {
     sound.currentTime = 0;
     await sound.play();
-    document.getElementById('playFallback').style.display = 'none';
-  }catch(err){
-    const fb = document.getElementById('playFallback');
-    fb.style.display = 'inline-block';
-    fb.onclick = function(){ sound.play().catch(()=>{}); fb.style.display='none'; };
+    playFallback.style.display = 'none';
+  } catch(err) {
+    // لو منع المتصفح التشغيل، أظهر زر التشغيل الاحتياطي
+    playFallback.style.display = 'inline-block';
+    playFallback.onclick = function(){ sound.play().catch(()=>{}); playFallback.style.display='none'; };
   }
 });
 
-document.getElementById('playFallback').addEventListener('click', function(){ sound.play().catch(()=>{}); });
+/* زر التشغيل الاحتياطي */
+playFallback.addEventListener('click', function(){ sound.play().catch(()=>{}); playFallback.style.display='none'; });
+
+/* ====== عند تغيير حجم الشاشة نعيد ضبط موضع زر "لا" إذا خرج قليلاً ====== */
+window.addEventListener('resize', function(){
+  // إذا أصبح الزر خارج النافذة، نعيد وضعه داخل الحدود
+  const rect = noBtn.getBoundingClientRect();
+  let moved = false;
+  if(rect.right > window.innerWidth - 8){
+    noBtn.style.left = (window.innerWidth - noBtn.offsetWidth - 12) + 'px';
+    moved = true;
+  }
+  if(rect.bottom > window.innerHeight - 8){
+    noBtn.style.top = (window.innerHeight - noBtn.offsetHeight - 12) + 'px';
+    moved = true;
+  }
+  if(rect.left < 8){
+    noBtn.style.left = '12px'; moved = true;
+  }
+  if(rect.top < 8){
+    noBtn.style.top = '12px'; moved = true;
+  }
+  if(moved) noBtn.style.transform = "scale(1)";
+});
+
+/* ====== لمنع أي سلوك يسبب scroll بسبب نقرات سريعة: التأكد أن body overflow:hidden دائمًا ====== */
+document.documentElement.style.overflow = 'hidden';
+document.body.style.overflow = 'hidden';
 </script>
 </body>
 </html>
