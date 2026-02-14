@@ -23,6 +23,7 @@ body{
   justify-content:center;
   padding:20px;
   color:var(--text);
+  overflow:hidden; /* يمنع scroll */
 }
 .wrapper{
   width:100%;
@@ -49,7 +50,7 @@ body{
   margin:8px 0 14px;
 }
 
-/* أزرار في صف واحد على الهاتف */
+/* أزرار */
 .actions{
   position:relative;
   width:100%;
@@ -102,7 +103,7 @@ button {
   color:#fff;
 }
 
-/* جعل الأشياء مناسبة جداً للموبايل */
+/* موبايل */
 @media (max-width:420px){
   .wrapper{ padding:14px; border-radius:12px;}
   #mainImage{ width:95%; margin:10px auto;}
@@ -135,72 +136,51 @@ button {
 <audio id="sound" src="calm-melody.mp3" preload="auto"></audio>
 
 <script>
-/* حدث الهرب لزر لا (يتعامل مع اللمس والماوس) */
+// زر لا يهرب دائمًا داخل الشاشة
 const noBtn = document.getElementById('no');
 
 function moveButtonOnce(){
-  // اختيار موقع داخل النافذة بشكل آمن
-  const margin = 12;
-  const maxX = Math.max(window.innerWidth - noBtn.offsetWidth - margin, margin);
-  const maxY = Math.max(window.innerHeight - noBtn.offsetHeight - margin, margin);
-  const x = Math.floor(Math.random() * (maxX - margin)) + margin;
-  const y = Math.floor(Math.random() * (maxY - margin)) + margin;
-  noBtn.style.position = 'absolute';
-  noBtn.style.left = x + 'px';
-  noBtn.style.top = y + 'px';
-  // صغير تأثير
-  noBtn.style.transform = "scale(1.03)";
-  setTimeout(()=> noBtn.style.transform = "scale(1)",120);
+    const margin = 12;
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    const btnWidth = noBtn.offsetWidth;
+    const btnHeight = noBtn.offsetHeight;
+    const maxX = viewportWidth - btnWidth - margin;
+    const maxY = viewportHeight - btnHeight - margin;
+    const x = Math.random() * maxX;
+    const y = Math.random() * maxY;
+    noBtn.style.position = 'fixed'; // ثابت في الشاشة
+    noBtn.style.left = x + 'px';
+    noBtn.style.top = y + 'px';
+    noBtn.style.transform = "scale(1.03)";
+    setTimeout(()=> noBtn.style.transform = "scale(1)",120);
 }
-
-// استجابة لكل من hover و touch
 noBtn.addEventListener('mouseover', moveButtonOnce);
 noBtn.addEventListener('touchstart', function(e){ e.preventDefault(); moveButtonOnce(); }, {passive:false});
 noBtn.addEventListener('click', moveButtonOnce);
 
-/* زر نعم — عرض النتيجة وتشغيل الصوت */
+// زر نعم — عرض النتيجة وتشغيل الصوت
 const yesBtn = document.getElementById('yes');
 const sound = document.getElementById('sound');
 const resultDiv = document.getElementById('result');
 
 yesBtn.addEventListener('click', async function(){
-  // إخفاء العناصر الأساسية
   document.getElementById('question').style.display='none';
   document.getElementById('mainImage').style.display='none';
   document.querySelector('.actions').style.display='none';
-
-  // إظهار النتيجة
   resultDiv.style.display='block';
-
-  // حاول تشغيل الصوت (بعض المتصفحات تحظر التشغيل قبل تفاعل المستخدم — هنا التفاعل هو الضغط على "نعم")
   try{
     sound.currentTime = 0;
     await sound.play();
-    // لو نجح، نخفي زر التشغيل الاحتياطي
     document.getElementById('playFallback').style.display = 'none';
   }catch(err){
-    // لو لم يعمل تلقائياً، أظهر زر لتشغيل الصوت يدوياً
     const fb = document.getElementById('playFallback');
     fb.style.display = 'inline-block';
     fb.onclick = function(){ sound.play().catch(()=>{}); fb.style.display='none'; };
   }
 });
 
-/* زر التشغيل الاحتياطي أيضاً يشتغل لو ظهر */
-document.getElementById('playFallback').addEventListener('click', function(){
-  sound.play().catch(()=>{});
-});
-
-/* عند تحميل الصفحة تأكد أن العناصر داخل wrapper ليست موقعة بشكل غريب */
-window.addEventListener('resize', function(){
-  // إعادة ضبط موضع زر "لا" لو صار خارج الشاشة
-  const rect = noBtn.getBoundingClientRect();
-  if(rect.right > window.innerWidth || rect.bottom > window.innerHeight){
-    noBtn.style.position = 'relative';
-    noBtn.style.left = '';
-    noBtn.style.top = '';
-  }
-});
+document.getElementById('playFallback').addEventListener('click', function(){ sound.play().catch(()=>{}); });
 </script>
 </body>
 </html>
