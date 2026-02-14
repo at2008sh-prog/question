@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>رسالة حب مفاجأة 💌</title>
 <style>
-/* ---------- متغيرات وأساسيات ---------- */
 :root{
   --bg1:#ffd6e7;
   --bg2:#ffeecf;
@@ -13,11 +12,8 @@
   --red:#ff4d4d;
   --text:#222;
 }
-html,body{height:100%; margin:0; padding:0;}
-
-/* منع أي scroll نهائيًا */
+html,body{height:100%; margin:0; padding:0; overflow:hidden;}
 body{
-  overflow:hidden;
   font-family: Arial, "Noto Sans Arabic", sans-serif;
   background: linear-gradient(135deg,var(--bg1),var(--bg2));
   display:flex;
@@ -26,12 +22,10 @@ body{
   color:var(--text);
   padding:16px;
 }
-
-/* الصندوق المركزي */
 .wrapper{
   width:100%;
   max-width:820px;
-  height:calc(100vh - 32px); /* يحتل الشاشة بدون أن ينشئ scroll */
+  height:calc(100vh - 32px);
   background:rgba(255,255,255,0.75);
   border-radius:16px;
   padding:20px;
@@ -40,12 +34,9 @@ body{
   flex-direction:column;
   align-items:center;
   justify-content:center;
-  position:relative;
   text-align:center;
-  overflow:hidden; /* يمنع ظهور محتوى خارج الصندوق */
+  overflow:hidden;
 }
-
-/* الصورة الرئيسية */
 #mainImage{
   width:82%;
   max-width:420px;
@@ -54,44 +45,22 @@ body{
   margin: 12px auto;
   box-shadow:0 8px 18px rgba(0,0,0,0.12);
 }
-
-/* --------- السؤال (مرتب + إيموجي على اليسار) --------- */
 #question{
-  /* حجم مرن مناسب للجوال */
   font-size: clamp(20px, 4.5vw, 30px);
   line-height:1.45;
   margin:10px 8px 14px;
-  /* نجعل العنصر حاوية مرنة لعمل نص + إيموجي على اليسار */
   display:flex;
   flex-direction:row;
   align-items:center;
   justify-content:center;
   gap:10px;
-  direction: rtl; /* كتابة عربية صحيحة */
+  direction: rtl;
   text-align: right;
   max-width:92%;
   word-break:normal;
 }
-
-/* نص السؤال */
-.qtext{
-  display:inline-block;
-  text-align:right;
-  direction:rtl;
-  white-space:normal;
-  word-break:break-word;
-}
-
-/* الايموجي نجعله على أقصى اليسار بعد النص */
-.qemoji{
-  display:inline-block;
-  /* نجبر الايموجي ليظهر بعد النص وبالجهة اليسرى */
-  margin-left:10px;
-  font-size:1.05em;
-  flex-shrink:0;
-}
-
-/* ---------- الأزرار ---------- */
+.qtext{display:inline-block; text-align:right; direction:rtl; white-space:normal; word-break:break-word;}
+.qemoji{display:inline-block; margin-left:10px; font-size:1.05em; flex-shrink:0;}
 .actions{
   position:relative;
   width:100%;
@@ -99,7 +68,6 @@ body{
   justify-content:center;
   gap:14px;
   margin-top:12px;
-  pointer-events:auto;
 }
 button{
   border:none;
@@ -112,12 +80,8 @@ button{
   user-select:none;
   -webkit-user-select:none;
 }
-
-/* ألوان */
 #yes{ background:var(--green); color:#fff; }
-#no{ background:var(--red); color:#fff; }
-
-/* ---------- نتيجة الضغط على نعم (مرتب) ---------- */
+#no{ background:var(--red); color:#fff; position:relative; }
 .result{
   display:none;
   margin-top:18px;
@@ -141,8 +105,6 @@ button{
   border-radius:12px;
   box-shadow:0 8px 18px rgba(0,0,0,0.12);
 }
-
-/* زر التشغيل الاحتياطي */
 #playFallback{
   display:none;
   margin-top:12px;
@@ -152,10 +114,8 @@ button{
   font-size:16px;
   border-radius:10px;
 }
-
-/* لجعل كل شيء مناسب جدًا للموبايل */
 @media (max-width:420px){
-  .wrapper{ padding:14px; border-radius:12px; height:calc(100vh - 24px); }
+  .wrapper{ padding:14px; border-radius:12px; height:calc(100vh - 24px);}
   #mainImage{ width:95%; margin:10px auto;}
   #question{ font-size:20px; }
 }
@@ -163,20 +123,15 @@ button{
 </head>
 <body>
 <div class="wrapper">
-
-  <!-- السؤال: نص عربي + ايموجي في span منفصل -->
   <h1 id="question">
     <span class="qtext">هل تحب رسالة مفاجأة؟</span>
     <span class="qemoji" aria-hidden="true">💌</span>
   </h1>
-
   <img id="mainImage" src="question.jpg" alt="سؤال">
-
-  <div class="actions" aria-hidden="false">
+  <div class="actions">
     <button id="yes" aria-label="نعم">نعم</button>
     <button id="no" aria-label="لا">لا</button>
   </div>
-
   <div class="result" id="result" aria-live="polite">
     <h1 id="resultText">
       ها قد وصلت! ❤️<br>
@@ -188,119 +143,73 @@ button{
     <br>
     <button id="playFallback">تشغيل الصوت إذا لم يعمل</button>
   </div>
-
 </div>
-
-<!-- الصوت -->
 <audio id="sound" src="calm-melody.mp3" preload="auto"></audio>
 
 <script>
-/* ====== تجهيز عناصر ====== */
 const noBtn = document.getElementById('no');
 const yesBtn = document.getElementById('yes');
 const sound = document.getElementById('sound');
 const resultDiv = document.getElementById('result');
 const playFallback = document.getElementById('playFallback');
 
-/* ====== وضع ابتدائي معطل لإحداث scroll ======
-   نستخدم position:fixed للزر "لا" حتى يبقى داخل نافذة العرض دومًا */
+// نترك الزر "لا" بجانب نعم عند التحميل
 function placeNoInitial() {
-  // وضع البداية قرب يمين المركز (لكن داخل الشاشة)
-  const vw = window.innerWidth;
-  const vh = window.innerHeight;
-  const startLeft = Math.min(vw * 0.6, vw - noBtn.offsetWidth - 16);
-  const startTop = Math.min(vh * 0.7, vh - noBtn.offsetHeight - 16);
-  noBtn.style.position = 'fixed';
-  noBtn.style.left = startLeft + 'px';
-  noBtn.style.top = startTop + 'px';
+  const yesRect = yesBtn.getBoundingClientRect();
+  noBtn.style.position = 'relative';
+  noBtn.style.left = '0px';
+  noBtn.style.top = '0px';
 }
 placeNoInitial();
 
-/* ====== دالة حركة الزر — مقيدة داخل نافذة العرض (بدون خروج) ====== */
+// حركة زر "لا" بعد التفاعل
 function moveButtonOnce(){
     const margin = 12;
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
     const btnWidth = noBtn.offsetWidth;
     const btnHeight = noBtn.offsetHeight;
-
-    const maxX = Math.max(viewportWidth - btnWidth - margin, margin);
-    const maxY = Math.max(viewportHeight - btnHeight - margin, margin);
-
-    // لإعطاء حركة لطيفة، نمنع الاختيار القريب جداً من المواضع الأخيرة
-    const prevLeft = parseFloat(noBtn.style.left) || (viewportWidth*0.6);
-    const prevTop = parseFloat(noBtn.style.top) || (viewportHeight*0.7);
-
-    let x, y, attempts = 0;
-    do {
-      x = Math.random() * maxX;
-      y = Math.random() * maxY;
-      attempts++;
-      // نكرر حتى نبتعد قليلاً عن الموقع السابق أو نجرب بعض المحاولات
-    } while(Math.hypot(x-prevLeft, y-prevTop) < 60 && attempts < 8);
-
+    const maxX = viewportWidth - btnWidth - margin;
+    const maxY = viewportHeight - btnHeight - margin;
+    const x = Math.random() * maxX;
+    const y = Math.random() * maxY;
+    noBtn.style.position = 'fixed';
     noBtn.style.left = x + 'px';
     noBtn.style.top = y + 'px';
-    // حركة صغيرة
     noBtn.style.transform = "scale(1.04)";
     setTimeout(()=> noBtn.style.transform = "scale(1)",120);
 }
 
-/* ====== حدث اللمس/ماوس ====== */
+// بدء الهروب عند المرور أو الضغط
 noBtn.addEventListener('mouseover', moveButtonOnce);
 noBtn.addEventListener('touchstart', function(e){ e.preventDefault(); moveButtonOnce(); }, {passive:false});
 noBtn.addEventListener('click', moveButtonOnce);
 
-/* ====== زر نعم: إخفاء المحتوى الأصلي وإظهار النتيجة وتشغيل الصوت ====== */
+// زر نعم
 yesBtn.addEventListener('click', async function(){
-  // اخفاء العناصر الأساسية
   document.getElementById('question').style.display='none';
   document.getElementById('mainImage').style.display='none';
   document.querySelector('.actions').style.display='none';
-
-  // إظهار النتيجة
   resultDiv.style.display='block';
-
-  // محاولة تشغيل الصوت (عادة يعمل لأن المستخدم ضغط زر)
-  try {
+  try{
     sound.currentTime = 0;
     await sound.play();
-    playFallback.style.display = 'none';
-  } catch(err) {
-    // لو منع المتصفح التشغيل، أظهر زر التشغيل الاحتياطي
-    playFallback.style.display = 'inline-block';
+    playFallback.style.display='none';
+  }catch(err){
+    playFallback.style.display='inline-block';
     playFallback.onclick = function(){ sound.play().catch(()=>{}); playFallback.style.display='none'; };
   }
 });
-
-/* زر التشغيل الاحتياطي */
 playFallback.addEventListener('click', function(){ sound.play().catch(()=>{}); playFallback.style.display='none'; });
 
-/* ====== عند تغيير حجم الشاشة نعيد ضبط موضع زر "لا" إذا خرج قليلاً ====== */
 window.addEventListener('resize', function(){
-  // إذا أصبح الزر خارج النافذة، نعيد وضعه داخل الحدود
   const rect = noBtn.getBoundingClientRect();
-  let moved = false;
-  if(rect.right > window.innerWidth - 8){
-    noBtn.style.left = (window.innerWidth - noBtn.offsetWidth - 12) + 'px';
-    moved = true;
-  }
-  if(rect.bottom > window.innerHeight - 8){
-    noBtn.style.top = (window.innerHeight - noBtn.offsetHeight - 12) + 'px';
-    moved = true;
-  }
-  if(rect.left < 8){
-    noBtn.style.left = '12px'; moved = true;
-  }
-  if(rect.top < 8){
-    noBtn.style.top = '12px'; moved = true;
-  }
-  if(moved) noBtn.style.transform = "scale(1)";
+  if(rect.right > window.innerWidth-8) noBtn.style.left = (window.innerWidth-noBtn.offsetWidth-12)+'px';
+  if(rect.bottom > window.innerHeight-8) noBtn.style.top = (window.innerHeight-noBtn.offsetHeight-12)+'px';
+  if(rect.left < 8) noBtn.style.left = '12px';
+  if(rect.top < 8) noBtn.style.top = '12px';
+  noBtn.style.transform="scale(1)";
 });
-
-/* ====== لمنع أي سلوك يسبب scroll بسبب نقرات سريعة: التأكد أن body overflow:hidden دائمًا ====== */
-document.documentElement.style.overflow = 'hidden';
-document.body.style.overflow = 'hidden';
 </script>
 </body>
 </html>
